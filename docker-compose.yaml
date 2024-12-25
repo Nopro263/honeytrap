@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - ./data:/var/lib/postgresql/data
+
+  
+  web:
+    build: ./backend
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DB: ${DB_DB}
+      DB_TYPE: postgresql+psycopg2
+      SECRET: ${SECRET}
+    
+    depends_on:
+      - db
+    
+  nginx:
+    image: nginx:1-alpine
+    ports:
+      - 81:80
+    volumes:
+      - ./frontend/:/var/www/html
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+    
+    depends_on:
+      - web
+
+ 
+  adminer:
+    image: adminer
+
+    depends_on:
+      - db
