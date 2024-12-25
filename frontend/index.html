@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <script type="module">
+        import { proof } from "./utils.js";
+        let response = await fetch("/api/request");
+        const data = await response.json();
+        const p = await proof(data.proof, data.hash, data.target_len);
+
+        let r = await fetch("/api/test?user=" + data.uuid + "&proof=" + p);
+        console.log(await r.text());
+    </script>
 </head>
 <body>
     
